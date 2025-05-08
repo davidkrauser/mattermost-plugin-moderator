@@ -19,8 +19,77 @@
         "bundle_path": "webapp/dist/main.js"
     },
     "settings_schema": {
-        "settings": [],
         "header": "Configure the Content Moderator plugin.",
-        "footer": "* To report an issue, make a suggestion, or contribute, [check the repository](https://github.com/mattermost/mattermost-plugin-content-moderator)."
+        "footer": "* To report an issue, make a suggestion, or contribute, [check the repository](https://github.com/mattermost/mattermost-plugin-content-moderator).",
+        "settings": [
+            {
+                "key": "enabled",
+                "display_name": "Enable Content Moderation",
+                "type": "bool",
+                "help_text": "When true, content moderation is enabled.",
+                "default": true
+            },
+            {
+                "key": "type",
+                "display_name": "Moderation Provider",
+                "type": "dropdown",
+                "help_text": "Select which content moderation provider to use.",
+                "default": "azure",
+                "options": [
+                    {
+                        "display_name": "Azure AI Content Safety",
+                        "value": "azure"
+                    }
+                ]
+            },
+            {
+                "key": "endpoint",
+                "display_name": "API Endpoint",
+                "type": "text",
+                "help_text": "The endpoint URL for the moderation API.",
+                "placeholder": "https://your-resource.cognitiveservices.azure.com/"
+            },
+            {
+                "key": "apiKey",
+                "display_name": "API Key",
+                "type": "text",
+                "help_text": "Your moderation API key.",
+                "placeholder": "Enter your API key here"
+            },
+            {
+                "key": "moderateAllUsers",
+                "display_name": "Moderate All Users",
+                "type": "bool",
+                "help_text": "When true, content from all users will be moderated. When false, only content from specified users will be moderated.",
+                "default": false
+            },
+            {
+                "key": "moderationTargets",
+                "display_name": "Moderation Targets",
+                "type": "custom",
+                "help_text": "If not moderating all users, the plugin moderates content from these User IDs."
+            },
+            {
+                "key": "threshold",
+                "display_name": "Content Moderation Threshold",
+                "type": "dropdown",
+                "help_text": "Severity threshold for all content categories (Low filters most aggressively).",
+                "default": "2",
+                "options": [
+                    {
+                        "display_name": "Low (2)",
+                        "value": "2"
+                    },
+                    {
+                        "display_name": "Medium (4)",
+                        "value": "4"
+                    },
+                    {
+                        "display_name": "High (6)",
+                        "value": "6"
+                    }
+                ]
+            }
+        ]
     }
 }

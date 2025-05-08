@@ -2,6 +2,8 @@ package main
 
 import (
 	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -18,6 +20,40 @@ import (
 // If you add non-reference types to your configuration struct, be sure to rewrite Clone as a deep
 // copy appropriate for your types.
 type configuration struct {
+	Enabled  bool   `json:"enabled"`
+	Type     string `json:"type"`
+	Endpoint string `json:"endpoint"`
+	APIKey   string `json:"apiKey"`
+
+	ModerationTargets string `json:"moderationTargets"`
+	ModerateAllUsers  bool   `json:"moderateAllUsers"`
+
+	Threshold string `json:"threshold"`
+}
+
+func (c *configuration) ModerationTargetsList() map[string]struct{} {
+	if c.ModerationTargets == "" {
+		return nil
+	}
+	targetMap := make(map[string]struct{})
+	for _, targetID := range strings.Split(c.ModerationTargets, ",") {
+		if targetID != "" {
+			targetMap[targetID] = struct{}{}
+		}
+	}
+	return targetMap
+}
+
+// ThresholdValue returns the threshold as an integer
+func (c *configuration) ThresholdValue() (int, error) {
+	if c.Threshold == "" {
+		return 0, errors.New("required threshold configuration is unset")
+	}
+	val, err := strconv.Atoi(c.Threshold)
+	if err != nil {
+		return 0, errors.Wrapf(err, "could not parse threshold value: '%s'", c.Threshold)
+	}
+	return val, nil
 }
 
 // Clone shallow copies the configuration. Your implementation may require a deep copy if
@@ -62,8 +98,14 @@ func (p *Plugin) setConfiguration(configuration *configuration) {
 			return
 		}
 
-		panic("setConfiguration called with the existing configuration")
+		panic("setConfiguration called with the existing configuration pointer - this may indicate a logic error")
 	}
+
+	p.API.LogInfo("Moderation configuration changed",
+		"moderationEnabled", configuration.Enabled,
+		"moderationAllUsers", configuration.ModerateAllUsers,
+		"moderationTargets", configuration.ModerationTargets,
+		"moderationThreshold", configuration.Threshold)
 
 	p.configuration = configuration
 }
