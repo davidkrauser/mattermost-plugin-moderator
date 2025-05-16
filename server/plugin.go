@@ -6,6 +6,7 @@ import (
 
 	"github.com/mattermost/mattermost-plugin-content-moderator/server/moderation"
 	"github.com/mattermost/mattermost-plugin-content-moderator/server/moderation/azure"
+	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/plugin"
 	"github.com/pkg/errors"
 )
@@ -37,6 +38,11 @@ func (p *Plugin) initialize() error {
 		return nil
 	}
 
+	botID, err := p.API.EnsureBotUser(&model.Bot{Username: config.BotUsername})
+	if err != nil {
+		return errors.Wrap(err, "could not initialize bot user")
+	}
+
 	targetUsers := config.ModerationTargetsList()
 	if len(targetUsers) == 0 && !config.ModerateAllUsers {
 		p.API.LogInfo("Content moderation is targeting no users")
@@ -55,7 +61,7 @@ func (p *Plugin) initialize() error {
 	}
 
 	processor, err := newPostProcessor(
-		moderator, thresholdValue, config.ModerateAllUsers, targetUsers)
+		botID, moderator, thresholdValue, config.ModerateAllUsers, targetUsers)
 	if err != nil {
 		p.API.LogError("failed to create post processor", "err", err)
 		return errors.Wrap(err, "failed to create post processor")

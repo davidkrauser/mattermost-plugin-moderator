@@ -359,6 +359,7 @@ func TestModeratePost(t *testing.T) {
 func TestNewPostProcessor(t *testing.T) {
 	tests := []struct {
 		name           string
+		botID          string
 		moderator      moderation.Moderator
 		thresholdValue int
 		targetAll      bool
@@ -368,6 +369,7 @@ func TestNewPostProcessor(t *testing.T) {
 	}{
 		{
 			name:           "Valid moderator with thresholds",
+			botID:          "bot123",
 			moderator:      &MockModerator{},
 			thresholdValue: 75,
 			targetAll:      true,
@@ -376,6 +378,7 @@ func TestNewPostProcessor(t *testing.T) {
 		},
 		{
 			name:           "Nil moderator",
+			botID:          "bot123",
 			moderator:      nil,
 			thresholdValue: 75,
 			targetAll:      true,
@@ -385,6 +388,7 @@ func TestNewPostProcessor(t *testing.T) {
 		},
 		{
 			name:           "Zero threshold",
+			botID:          "bot123",
 			moderator:      &MockModerator{},
 			thresholdValue: 0,
 			targetAll:      false,
@@ -393,6 +397,7 @@ func TestNewPostProcessor(t *testing.T) {
 		},
 		{
 			name:           "No target users",
+			botID:          "bot123",
 			moderator:      &MockModerator{},
 			thresholdValue: 75,
 			targetAll:      false,
@@ -403,7 +408,7 @@ func TestNewPostProcessor(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			processor, err := newPostProcessor(tt.moderator, tt.thresholdValue, tt.targetAll, tt.targetUsers)
+			processor, err := newPostProcessor(tt.botID, tt.moderator, tt.thresholdValue, tt.targetAll, tt.targetUsers)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -414,6 +419,7 @@ func TestNewPostProcessor(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 				assert.NotNil(t, processor)
+				assert.Equal(t, tt.botID, processor.botID)
 				assert.Equal(t, tt.moderator, processor.moderator)
 				assert.Equal(t, tt.thresholdValue, processor.thresholdValue)
 				assert.Equal(t, tt.targetAll, processor.targetAll)

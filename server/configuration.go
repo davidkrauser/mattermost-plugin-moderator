@@ -20,14 +20,15 @@ import (
 // If you add non-reference types to your configuration struct, be sure to rewrite Clone as a deep
 // copy appropriate for your types.
 type configuration struct {
-	Enabled  bool   `json:"enabled"`
-	Type     string `json:"type"`
-	Endpoint string `json:"azure_endpoint"`
-	APIKey   string `json:"azure_apiKey"`
-
+	Enabled           bool   `json:"enabled"`
 	ModerationTargets string `json:"moderationTargets"`
 	ModerateAllUsers  bool   `json:"moderateAllUsers"`
+	BotUsername       string `json:"botUsername"`
 
+	Type string `json:"type"`
+
+	Endpoint  string `json:"azure_endpoint"`
+	APIKey    string `json:"azure_apiKey"`
 	Threshold string `json:"azure_threshold"`
 }
 
@@ -105,7 +106,8 @@ func (p *Plugin) setConfiguration(configuration *configuration) {
 		"moderationEnabled", configuration.Enabled,
 		"moderationAllUsers", configuration.ModerateAllUsers,
 		"moderationTargets", configuration.ModerationTargets,
-		"moderationThreshold", configuration.Threshold)
+		"moderationThreshold", configuration.Threshold,
+		"botUsername", configuration.BotUsername)
 
 	p.configuration = configuration
 }

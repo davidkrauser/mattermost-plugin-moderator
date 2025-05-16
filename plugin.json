@@ -71,6 +71,14 @@
                 "help_text": "If not moderating all users, the plugin moderates content from these User IDs."
             },
             {
+                "key": "botUsername",
+                "display_name": "Bot Username",
+                "type": "text",
+                "help_text": "The username that will be displayed for moderation notifications.",
+                "placeholder": "moderator",
+                "default": "moderator"
+            },
+            {
                 "key": "azure_threshold",
                 "display_name": "Azure Moderation Threshold",
                 "type": "dropdown",
